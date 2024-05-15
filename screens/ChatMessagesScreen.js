@@ -8,7 +8,13 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import React, { useState, useContext, useLayoutEffect, useEffect,useRef } from "react";
+import React, {
+  useState,
+  useContext,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+} from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -34,29 +40,27 @@ const ChatMessagesScreen = () => {
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
-    scrollToBottom()
-  },[]);
+    scrollToBottom();
+  }, []);
 
   const scrollToBottom = () => {
-      if(scrollViewRef.current){
-          scrollViewRef.current.scrollToEnd({animated:false})
-      }
-  }
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: false });
+    }
+  };
 
   const handleContentSizeChange = () => {
-      scrollToBottom();
-  }
+    scrollToBottom();
+  };
 
   const handleEmojiPress = () => {
     setShowEmojiSelector(!showEmojiSelector);
   };
 
-
-
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/messages/${userId}/${recepientId}`
+        `https://chatapp-m0q8.onrender.com/messages/${userId}/${recepientId}`
       );
       const data = await response.json();
 
@@ -78,7 +82,7 @@ const ChatMessagesScreen = () => {
     const fetchRecepientData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/user/${recepientId}`
+          `https://chatapp-m0q8.onrender.com/user/${recepientId}`
         );
 
         const data = await response.json();
@@ -109,10 +113,13 @@ const ChatMessagesScreen = () => {
         formData.append("messageText", message);
       }
 
-      const response = await fetch("http://localhost:8000/messages", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://chatapp-m0q8.onrender.com/messages",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         setMessage("");
@@ -182,18 +189,21 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
-      const response = await fetch("http://localhost:8000/deleteMessages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages: messageIds }),
-      });
+      const response = await fetch(
+        "https://chatapp-m0q8.onrender.com/deleteMessages",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ messages: messageIds }),
+        }
+      );
 
       if (response.ok) {
         setSelectedMessages((prevSelectedMessages) =>
-        prevSelectedMessages.filter((id) => !messageIds.includes(id))
-      );
+          prevSelectedMessages.filter((id) => !messageIds.includes(id))
+        );
 
         fetchMessages();
       } else {
@@ -237,7 +247,11 @@ const ChatMessagesScreen = () => {
   };
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#F0F0F0" }}>
-      <ScrollView ref={scrollViewRef} contentContainerStyle={{flexGrow:1}} onContentSizeChange={handleContentSizeChange}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={{ flexGrow: 1 }}
+        onContentSizeChange={handleContentSizeChange}
+      >
         {messages.map((item, index) => {
           if (item.messageType === "text") {
             const isSelected = selectedMessages.includes(item._id);
